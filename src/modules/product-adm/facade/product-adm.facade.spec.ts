@@ -1,27 +1,31 @@
-import { Sequelize } from "sequelize-typescript";
-import ProductAdmFacadeFactory from "../factory/facade.factory";
-import { ProductModel } from "../repository/product.model";
+import { Sequelize } from 'sequelize-typescript';
+import { Umzug } from 'umzug';
+import ProductAdmFacadeFactory from '../factory/facade.factory';
+import { ProductModel } from '../repository/product.model';
+import { migrator } from '../../@shared/infra/db/migrator';
 
-describe("ProductAdmFacade test", () => {
+describe('ProductAdmFacade test', () => {
   let sequelize: Sequelize;
+  let migration: Umzug<any>;
 
   beforeEach(async () => {
     sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
+      dialect: 'sqlite',
+      storage: ':memory:',
       logging: false,
-      sync: { force: true },
     });
 
     await sequelize.addModels([ProductModel]);
-    await sequelize.sync();
+    migration = migrator(sequelize);
+    await migration.up();
   });
 
   afterEach(async () => {
+    await migration.down();
     await sequelize.close();
   });
 
-  it("should create a product", async () => {
+  it('should create a product', async () => {
     // const productRepository = new ProductRepository();
     // const addProductUseCase = new AddProductUseCase(productRepository);
     // const productFacade = new ProductAdmFacade({
@@ -32,16 +36,16 @@ describe("ProductAdmFacade test", () => {
     const productFacade = ProductAdmFacadeFactory.create();
 
     const input = {
-      id: "1",
-      name: "Product 1",
-      description: "Product 1 description",
+      id: '1',
+      name: 'Product 1',
+      description: 'Product 1 description',
       purchasePrice: 10,
       stock: 10,
     };
 
     await productFacade.addProduct(input);
 
-    const product = await ProductModel.findOne({ where: { id: "1" } });
+    const product = await ProductModel.findOne({ where: { id: '1' } });
     expect(product).toBeDefined();
     expect(product.id).toBe(input.id);
     expect(product.name).toBe(input.name);
@@ -50,18 +54,18 @@ describe("ProductAdmFacade test", () => {
     expect(product.stock).toBe(input.stock);
   });
 
-  it("should check product stock", async () => {
+  it('should check product stock', async () => {
     const productFacade = ProductAdmFacadeFactory.create();
     const input = {
-      id: "1",
-      name: "Product 1",
-      description: "Product 1 description",
+      id: '1',
+      name: 'Product 1',
+      description: 'Product 1 description',
       purchasePrice: 10,
       stock: 10,
     };
     await productFacade.addProduct(input);
 
-    const result = await productFacade.checkStock({ productId: "1" });
+    const result = await productFacade.checkStock({ productId: '1' });
 
     expect(result.productId).toBe(input.id);
     expect(result.stock).toBe(input.stock);

@@ -1,23 +1,27 @@
 import { Sequelize } from 'sequelize-typescript';
+import { Umzug } from 'umzug';
 import InvoiceModel from '../repository/invoice.model';
 import InvoiceFacadeFactory from '../factory/invoice.facade.factory';
+import { migrator } from '../../@shared/infra/db/migrator';
 
 describe('Invoice facade integration test', () => {
   let sequelize: Sequelize;
+  let migration: Umzug<any>;
 
   beforeEach(async () => {
     sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: ':memory:',
       logging: false,
-      sync: { force: true },
     });
 
     await sequelize.addModels([InvoiceModel]);
-    await sequelize.sync();
+    migration = migrator(sequelize);
+    await migration.up();
   });
 
   afterEach(async () => {
+    await migration.down();
     await sequelize.close();
   });
 
