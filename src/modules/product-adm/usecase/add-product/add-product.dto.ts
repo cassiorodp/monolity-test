@@ -4,6 +4,7 @@ export interface AddProductInputDto {
   description: string;
   purchasePrice: number;
   stock: number;
+  salesPrice?: number;
 }
 
 export interface AddProductOutputDto {
@@ -12,6 +13,7 @@ export interface AddProductOutputDto {
   description: string;
   purchasePrice: number;
   stock: number;
+  salesPrice?: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,7 +1,7 @@
-import Id from "../../../@shared/domain/value-object/id.value-object";
-import Product from "../../domain/product.entity";
-import ProductGateway from "../../gateway/product.gateway";
-import { AddProductInputDto, AddProductOutputDto } from "./add-product.dto";
+import Id from '../../../@shared/domain/value-object/id.value-object';
+import Product from '../../domain/product.entity';
+import ProductGateway from '../../gateway/product.gateway';
+import { AddProductInputDto, AddProductOutputDto } from './add-product.dto';
 
 export default class AddProductUseCase {
   private _productRepository: ProductGateway;
@@ -17,6 +17,7 @@ export default class AddProductUseCase {
       description: input.description,
       purchasePrice: input.purchasePrice,
       stock: input.stock,
+      salesPrice: input.salesPrice,
     };
 
     const product = new Product(props);
@@ -28,6 +29,7 @@ export default class AddProductUseCase {
       description: product.description,
       purchasePrice: product.purchasePrice,
       stock: product.stock,
+      salesPrice: product.salesPrice,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     };
